@@ -4,16 +4,14 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent;
-import org.example.domain.TemperatureClassifier;
 import org.example.domain.WeatherService;
+import org.example.domain.WeatherServiceFactory;
 import org.example.infrastructure.locationprovider.LocationProvider;
-import org.example.infrastructure.locationprovider.wroclawlocationprovider.WroclawLocationProvider;
-import org.example.infrastructure.weatherprovider.openmeteoprovider.OpenMeteoClient;
-import org.example.models.Coordinates;
+import org.example.infrastructure.locationprovider.universallocationprovider.*;
+import org.example.models.Location;
 import org.example.models.ResponseBuilder;
 import org.example.models.WeatherResult;
 
-import java.net.http.HttpClient;
 
 public class WeatherHandler implements RequestHandler<APIGatewayProxyRequestEvent, APIGatewayProxyResponseEvent> {
 
@@ -22,8 +20,8 @@ public class WeatherHandler implements RequestHandler<APIGatewayProxyRequestEven
 
     public WeatherHandler() {
         this(
-                new WeatherService(OpenMeteoClient.createDefault(HttpClient.newHttpClient()), new TemperatureClassifier()),
-                new WroclawLocationProvider()
+                WeatherServiceFactory.createDefault(),
+                CityLocationProviderFactory.createDefault()
         );
     }
 
@@ -35,9 +33,14 @@ public class WeatherHandler implements RequestHandler<APIGatewayProxyRequestEven
     @Override
     public APIGatewayProxyResponseEvent handleRequest(APIGatewayProxyRequestEvent request, Context context) {
         try{
-            Coordinates coords = locationProvider.getCoordinates(request);
-            WeatherResult result = weatherService.getCurrentTemperature(coords.latitude(), coords.longitude());
-            return ResponseBuilder.buildResponse(result);
+            Location location = locationProvider.getCoordinates(request);
+
+            WeatherResult result = weatherService.getCurrentTemperature(
+                    location.coordinates().latitude(),
+                    location.coordinates().longitude()
+            );
+
+            return ResponseBuilder.buildResponse(location.cityName(), result);
         }catch (RuntimeException e){
             return ResponseBuilder.buildErrorResponse(e.getMessage());
         }

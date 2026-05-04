@@ -2,8 +2,8 @@ package org.example.infrastructure.locationprovider;
 
 
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
-import org.example.models.Coordinates;
+import org.example.models.Location;
 
 public interface LocationProvider {
-    Coordinates getCoordinates(APIGatewayProxyRequestEvent request);
+    Location getCoordinates(APIGatewayProxyRequestEvent request);
 }

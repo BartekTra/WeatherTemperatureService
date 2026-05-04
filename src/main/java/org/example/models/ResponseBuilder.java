@@ -14,8 +14,9 @@ public class ResponseBuilder {
         throw new UnsupportedOperationException("This is a utility class and should not be instantiated");
     }
 
-    public static APIGatewayProxyResponseEvent buildResponse(WeatherResult result) {
+    public static APIGatewayProxyResponseEvent buildResponse(String cityName, WeatherResult result) {
         Map<String, Object> responseBody = Map.of(
+                "city", cityName,
                 "temperature", result.temperature(),
                 "temperature_class", result.category().getDisplayName()
         );
