@@ -32,3 +32,19 @@ By instructing the mock to return predefined temperature values (e.g., -5.0, 15.
 we can write deterministic assertions to verify that our TemperatureClassifier correctly
 assigns the "Freezing", "Mild", and "Hot" categories, all without making a single network call.
 This ensures tests are fast, reliable, and isolated from external network instability.
+
+# Task 4. 
+## Design ReflectionHow the current design supports or limits such changes:
+The current design supports the addition of new weather providers because of Dependency Inversion Principle.
+The WeatherService does not depend on a specific external API, but on the WeatherApiClient interface.
+To introduce a new provider, simply create a new class that implements this interface and inject it
+into the service via the factory or constructor. However, a slight limitation of the current design is that the interface returns a primitive
+double for temperature. If a future provider offered richer data that we wanted to use, the interface and domain models would need to be updated.
+
+## What I would improve if I had more time:
+If given more time, I would enhance the resilience and performance of the external API integrations.
+I would implement a fallback mechanism, so if the primary weather provider is down or exceeds rate limits,
+the service automatically calls a secondary provider. Additionally, I would introduce a caching layer for example to 
+store the coordinates and temperature for a given city for an hour to reduce latency and minimize HTTP calls.
+Finally, updating the WeatherApiClient to return a domain object (e.g., WeatherData) instead of a primitive
+type would make the system fully extensible for future requirements like fetching humidity or wind speed. 
