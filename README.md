@@ -1,3 +1,6 @@
+# Public function URL
+https://xo724qx2ybiz727sgbps6alzsi0wlcuy.lambda-url.eu-central-1.on.aws/
+By default it checks temperature in Wroclaw, but if You want to check temperature in any different city put ?city=*City name in english* as params when sending http GET method
 # Task 1.
 ## Weather Temperature Service (AWS Lambda)
 ## a. Brief description of the solution
